@@ -45,7 +45,8 @@ export default {
 </script>
 <style scoped lang="stylus">
   .comment
-    padding 20px 0
+    padding 70px 10px 10px 10px
+    background-color white
     .comment-item
       padding-bottom 20px
       display flex

@@ -4,15 +4,18 @@
       <span class="rank-icon" @click="goRanking"><i class="icon-back"></i></span>
       <span class="title-name">{{rankType}}</span>
     </div>
-    <ranklist :ranklist="ranklist"></ranklist>
-    <loading :class="{'full':ranklist.length===0}" v-if="ranklist.length!=start"></loading>
-    <div class="moremovie" @click="loadmore" v-if="ranklist.length===start&&hasmore">加载更多...</div>
+    <scroll :data="ranklist" ref="rankScroll" class="rank-container" :pullup="hasmore" @scrolltoEnd="loadmore">
+      <ranklist :ranklist="ranklist">
+        <loading :class="{'full':ranklist.length===0}" v-if="ranklist.length!=start"></loading>
+      </ranklist>
+    </scroll>
   </div>
 </template>
 
 <script>
 import ranklist from 'components/ranklist/ranklist'
 import loading from 'components/loading/loading'
+import scroll from 'components/scroll/scroll'
 import {getHotmovie} from "../../common/js/getmovielist"
 import { createRankList } from "../../common/js/movieList"
 export default {
@@ -26,9 +29,6 @@ export default {
       hasmore:true
     }
   },
-  destroyed(){
-    this.$emit('activeShow',true);
-  },
   methods:{
     goRanking(){
       this.$router.push({
@@ -36,6 +36,10 @@ export default {
       })
     },
     loadmore(){
+      // this.$refs.rankScroll.refresh()
+      if(!this.hasmore) {
+        return
+      }
       getHotmovie(this.start,this.count,this.dataFn).then(res=>{
           this.ranklist=this.ranklist.concat(createRankList(res.subjects));
           this._checkMore(res);
@@ -74,6 +78,7 @@ export default {
   components:{
     ranklist,
     loading,
+    scroll
   },
   created(){
     this.getListPath();
@@ -85,7 +90,7 @@ export default {
 </script>
 <style scoped lang="stylus">
   .rank-wrapper
-    position relative
+    position fixed
     top 0
     left 0
     right 0
@@ -104,6 +109,7 @@ export default {
         margin 0 15px 0 15px
         line-height 50px
         color #42bd56
+    
     .moremovie
       width 335px
       height 35px
@@ -113,4 +119,10 @@ export default {
       margin 10px auto
       border-radius 10px
       background-color #ccc
+    .rank-container
+      position fixed
+      top 50px
+      bottom 0
+      background-color #fff
+      overflow hidden
 </style>

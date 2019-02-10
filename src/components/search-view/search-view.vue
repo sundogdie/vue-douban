@@ -1,12 +1,26 @@
 <template>
   <div class="suggest-wrapper">
-    <movielist :movies="results"></movielist>
+    <ul class="list">
+      <li class="item" v-for="(item,index) in results" :key="index" @click="goMovieDetail(item.id)">
+        <div class="img">
+          <img v-lazy="replaceUrl(item.image)" height="120" width="80">
+        </div>
+        <div class="content">
+          <span class="title">{{item.title}}</span>
+          <star :score="item.rating"></star>
+          <span class="director">导演:{{item.director}}</span>
+          <span class="casts">主演:{{item.casts}}</span>
+          <span class="haswatched">{{item.collectCount}}人看过</span>
+        </div>
+      </li>
+    </ul>    
     <div class="no-result" v-if="noResult">抱歉，暂无搜索结果 :(</div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import movielist from 'components/movielist/movielist';
+import star from 'components/star/star'
 import { movieSearch, tagSearch } from '../../common/js/getmovielist';
 import { createSearchList } from "../../common/js/movieList"
 const SEARCH_MORE = 20;
@@ -30,7 +44,8 @@ const SEARCH_MORE = 20;
       };
     },
     components:{
-      movielist
+      movielist,
+      star
     },
     created() {
       this._selectType();
@@ -64,7 +79,12 @@ const SEARCH_MORE = 20;
           this._checkMore(res);
           // console.log(this.result);
         });
-      },    
+      },
+      goMovieDetail(id) {
+        this.$router.push({
+          path: `/movie/${id}`
+        })
+      },
       getPubdate(date) {
         let pubdate = '';
         for (let i = 0; i < date.length; i++) {
@@ -110,6 +130,27 @@ const SEARCH_MORE = 20;
     z-index 999
     background-color #fff
     overflow-x hidden
+    .list
+      .item
+        padding 15px 0
+        display flex
+        align-items center
+        .img
+          flex 80px 0 
+          margin-right 10px
+        .content
+          flex 1
+          height 120px
+          display flex
+          flex-direction column
+          justify-content space-around
+          color #333
+          .title
+            font-size 16px
+          .director,.casts,.haswatched
+            font-size 12px
+          .haswatched
+            color  #42bd56
     .no-result
         position: absolute
         top: 50%

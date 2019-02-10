@@ -1,8 +1,10 @@
 # vue-demo
 ## 项目简介
-> 一个模仿的demo 原帖=>https://github.com/buptsky
+> 一个模仿豆瓣的vue项目
 
->有些地方改了一部分  没有用滚动库 体验可能差很多 也没有使用vuex
+> 没有使用滚动库 体验可能不太好 
+
+>用到的技术栈为vue+vue-cli+vue-router+stylus
 
 >希望越来越好
 ## Build Setup

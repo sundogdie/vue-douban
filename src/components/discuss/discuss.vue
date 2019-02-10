@@ -10,13 +10,12 @@
     </span>
     </div>
     <div class="all-discuss" ref="top">
-      <div class="discuss-content">
+      <scroll class="discuss-content" @scrolltoEnd="getData" :pullup="true" :data="discussions">
         <comment :movie_comment="discussions" v-if="type==='comments'">
         </comment>
         <review :movie_review="discussions" @selectReview="selectReview" v-else>
         </review>
-        <div @click="getData" class="load">加载更多......</div>
-      </div>
+      </scroll>
     </div>
   </div>    
 </template>
@@ -24,6 +23,7 @@
 <script>
 import comment from 'components/movie-comment/comment'
 import review from 'components/movie-review/review'
+import scroll from 'components/scroll/scroll'
 import { getHotmovie } from '../../common/js/getmovielist'
 const SEARCH_MORE = 20;
 export default {
@@ -34,7 +34,8 @@ export default {
   },
   components:{
     review,
-    comment
+    comment,
+    scroll
   },
   data(){
     return{
@@ -126,15 +127,17 @@ export default {
           color: #42bd56
     .all-discuss
       position: fixed
-      top: 0
+      top 0
       bottom: 0
       left: 0
       right: 0
       z-index: 995
-      overflow-x: hidden
+      overflow: hidden
       background-color: white
       .discuss-content
-        padding: 50px 20px 0 20px
+        padding: 0 20px 0 20px
+        overflow hidden
+        height 100%
       .load
         padding-bottom 20px
         text-align: center

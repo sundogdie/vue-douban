@@ -2,12 +2,12 @@
   <div class="rank-list-wrapper">
     <ul>
       <li class="rank-item" v-for="(item,index) in ranklist" :key="index">
-        <div class="rank-rating">
+        <div class="rank-rating" v-if="show">
           <span class="item-border"></span>
           <span class="item-num">{{index+1}}</span>
         </div>
         <div class="rank-info" @click="tomovie(item)">
-          <div class="info-image"><img v-lazy="item.image" width="70" height="100"></div>
+          <div class="info-image"><img :src="getImages(item.image)" width="70" height="100"></div>
           <div class="info-content">
             <span class="info-title">{{item.title}}</span>
             <star :score="item.rating" :size="24"></star>
@@ -17,6 +17,7 @@
         </div>
       </li>
     </ul>
+    <slot></slot>
   </div>
 </template>
 
@@ -24,8 +25,12 @@
 import star from "components/star/star"
 export default {
   props:{
-    ranklist:{
-      type:Array
+    ranklist: {
+      type: Array
+    },
+    show: {
+      type: Boolean,
+      default: true
     }
   },
   components:{
@@ -36,6 +41,12 @@ export default {
       this.$router.push({
         path:`/movie/${data.id}`
       })
+    },
+    getImages( _url ){
+      if( _url !== undefined ){
+        let _u = _url.substring( 7 );
+        return 'https://images.weserv.nl/?url=' + _u;
+      }
     }
   }
 }
@@ -46,7 +57,8 @@ export default {
   .rank-list-wrapper
     background-color #fff
     z-index 999
-    padding 51px 15px 0 15px
+    overflow hidden
+    padding 0 15px 0 15px
     .rank-item
       padding-top 30px
       .rank-rating

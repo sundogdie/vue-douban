@@ -13,9 +13,8 @@ export default {
 </script>
 <style scoped>
   .spinner {
-  margin: 0 auto;;
-  width: 150px;
-  margin: 10px auto;
+  width: 100%;
+  padding: 10px 0;
   text-align: center;
   z-index: 999;
 }

@@ -57,11 +57,11 @@ export default {
     display inline-block
     font-size 12px
     margin-left 5px
-    color green
+    color #ffb400
   .score-none
     display inline-block
     font-size 12px
-    color green
+    color #ffb400
   .star-item
       display: inline-block
       background-repeat: no-repeat

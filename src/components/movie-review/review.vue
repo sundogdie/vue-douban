@@ -44,7 +44,8 @@ export default {
 </script>
 <style scoped lang="stylus">
   .review
-    padding 20px 0
+    padding 70px 10px 10px 10px
+    background-color #fff
     .review-item
       margin-bottom 20px
       font-size 12px

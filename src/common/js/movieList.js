@@ -139,3 +139,23 @@ function normalizeDate(date) {
   }
   return ret;
 }
+export function createLists(params) {
+  const lists = {
+    title:params.title,
+    id:params.id,
+    casts:filterCasts(params.casts),
+    image:params.images.large,
+    rating:params.rating.average,
+    director:params.directors[0].name
+  }
+  return lists
+}
+export  class Celebrity {
+  constructor({id, name, works, image}) {
+    this.id = id;
+    this.name = name;
+    this.works = works;
+    this.image = image;
+  }
+}
+

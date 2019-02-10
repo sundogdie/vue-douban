@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <keep-alive include="show,rank">
+      <router-view></router-view>
+    </keep-alive>
     <div class="footer">
       <router-link to="/show" class="tab">
         <span class="tab-icon">

@@ -1,5 +1,6 @@
 <template>
   <div class="ranking">
+    <loading v-if="urlList.length===0" class="full"></loading>
     <div class="search" @click="gosearch">
       <div class="logo">
         <img src="./douban-logo.png" width="35" height="35">
@@ -9,72 +10,72 @@
         <span>电影/影人/标签</span>
       </div>
     </div>
-    <div class="ranklist" v-if='show'>
-      <h1 class="title">精选榜单</h1>
-      <router-link to="ranking/top250">
-        <div class="rank-item top250">
-          <div class="desc">
-            <h2 class="desc-title">豆瓣 Top250</h2>
-            <span class="desc-next-title">8分以上好电影</span>
+    <scroll  class="ranklist" :data="weekdate"  v-if='urlList.length!==0'>
+      <div>
+        <h1 class="title">精选榜单</h1>
+        <router-link to="ranking/top250">
+          <div class="rank-item top250">
+            <div class="desc">
+              <h2 class="desc-title">豆瓣 Top250</h2>
+              <span class="desc-next-title">8分以上好电影</span>
+            </div>
+            <div class="rank-img">
+                <img v-for="(item,index) in urlList[0]" :src="replaceUrl(item)" :key="index" :class="{'top': index === 1 }"/>
+            </div>
           </div>
-          <div class="rank-img">
-              <img v-for="(item,index) in urlList[0]" :src="replaceUrl(item)" :key="index" :class="{'top': index === 1 }"/>
+        </router-link>
+        <router-link  to="ranking/weekly">
+          <div class="rank-item weekly">
+            <div class="desc">
+              <h2 class="desc-title">本周口碑榜</h2>
+              <span class="desc-next-title">{{weekdate}}</span>
+            </div>
+            <div class="rank-img">
+              <img v-for="(item,index) in urlList[1]" :src="replaceUrl(item)" :key="index" :class="{'top': index === 1 }"/>
+            </div>
           </div>
-        </div>
-      </router-link>
-     <router-link  to="ranking/weekly">
-        <div class="rank-item weekly">
-          <div class="desc">
-            <h2 class="desc-title">本周口碑榜</h2>
-            <span class="desc-next-title">{{weekdate}}</span>
+        </router-link>
+        <router-link to="ranking/newmovie">
+          <div class="rank-item new-movie">
+            <div class="desc">
+              <h2 class="desc-title">新片榜</h2>
+              <span class="desc-next-title">{{weekdate}}</span>
+            </div>
+            <div class="rank-img">
+              <img v-for="(item,index) in urlList[2]" :src="replaceUrl(item)" :key="index" :class="{'top': index === 1 }"/>
+            </div>
           </div>
-          <div class="rank-img">
-            <img v-for="(item,index) in urlList[1]" :src="replaceUrl(item)" :key="index" :class="{'top': index === 1 }"/>
+        </router-link>
+        <router-link to="ranking/usamovie">
+          <div class="rank-item us-box">
+            <div class="desc">
+              <h2 class="desc-title">北美票房榜</h2>
+              <span class="desc-next-title">票房最高排名</span>
+            </div>
+            <div class="rank-img">
+              <img v-for="(item,index) in urlList[3]" :src="replaceUrl(item)" :key="index" :class="{'top': index === 1 }"/>
+            </div>
           </div>
-        </div>
-     </router-link>
-      <router-link to="ranking/newmovie">
-        <div class="rank-item new-movie">
-          <div class="desc">
-            <h2 class="desc-title">新片榜</h2>
-            <span class="desc-next-title">{{weekdate}}</span>
-          </div>
-          <div class="rank-img">
-            <img v-for="(item,index) in urlList[2]" :src="replaceUrl(item)" :key="index" :class="{'top': index === 1 }"/>
-          </div>
-        </div>
-      </router-link>
-      <router-link to="ranking/usamovie">
-        <div class="rank-item us-box">
-          <div class="desc">
-            <h2 class="desc-title">北美票房榜</h2>
-            <span class="desc-next-title">票房最高排名</span>
-          </div>
-          <div class="rank-img">
-            <img v-for="(item,index) in urlList[3]" :src="replaceUrl(item)" :key="index" :class="{'top': index === 1 }"/>
-          </div>
-        </div>
-      </router-link>
-    </div>
-    <router-view @activeShow="active"></router-view>
+        </router-link>
+      </div>
+    </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
+import scroll from 'components/scroll/scroll'
 import loading from 'components/loading/loading'
 import WeekDate from '../../common/js/getWeekDate.js'
 import { getHotmovie } from '../../common/js/getmovielist'
 export default {
+  name:'rank',
   methods:{
     gosearch(){
       this.$router.push({
         path:"/search"
       })
     },
-    active(s){
-      this.show=s
-    },//进入排行详情隐藏外部组件
-
     getUrlList(url) { // 获取处理过的图片集合，各个排行榜数据结构不一致需要处理
       let list = [];
       url.forEach((item, index) => {
@@ -109,27 +110,24 @@ export default {
   },
   data(){
     return{
-      show:true,
-      weekdate:null,
-      urlList:null
+      weekdate: [],
+      urlList: []
     }
   },
   components:{
-    loading
+    loading,
+    scroll
   }
 }
 
 </script>
 <style scoped lang="stylus">
   .ranking
-    display block
     .search
       height 50px
       width 100%
       z-index 999
       background-color white
-      position fixed
-      top 0
       padding 10px 10px 5px 10px
       display flex
       align-items  center
@@ -147,9 +145,14 @@ export default {
         border-radius 5px
         color #777
     .ranklist
-      padding 0 15px 15px 15px
-      margin 50px 0 60px 0
+      padding 0 15px
       z-index 100
+      position fixed
+      top 50px
+      left 0
+      right 0
+      bottom 70px
+      overflow hidden
       .title
         padding-top 20px
         color #333

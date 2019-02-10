@@ -16,27 +16,31 @@
       </div>
     </div>
     <div class="operate">
-      <div class="want-watch">想看</div>
-      <div class="has-watch">看过⭐⭐⭐⭐⭐</div>
+      <div :class="wantClass()" @click="toggleWant">想看</div>
+      <div :class="watchClass()" @click="toggleWatch">看过★★★★★  </div>
     </div>
     <div class="summary">
       <h1>剧情简介</h1>
       <p>&nbsp;&nbsp;&nbsp;{{movieDetail.summary}}</p>
     </div>
-    <div class="casts">
-      <h2>影人</h2>
-      <div class="casts-item" v-for="(item,index) in allCasts" :key="index" @click="selectCelebrity(item.id)">
-        <img v-lazy="getImages(item.avatars.large)" width="90" height="120">
-        <h3>{{item.name}}</h3>
-        <span v-if="item.isDirector">导演</span>
+    <scroll class="casts" :data="allCasts" :scrollX="true" :eventPassthrough="eventPassthrough">
+      <div ref="content">
+        <h2>影人</h2>
+        <div class="casts-item" v-for="(item,index) in allCasts" :key="index" @click="selectCelebrity(item.id)">
+          <img v-lazy="getImages(item.avatars.large)" width="90" height="120">
+          <h3>{{item.name}}</h3>
+          <span v-if="item.isDirector">导演</span>
+        </div>
       </div>
-    </div>
-    
+    </scroll>  
   </div>  
 </template>
 
 <script>
 import star from "components/star/star"
+import {mapActions,mapState} from 'vuex'
+import { createLists } from "../../common/js/movieList"
+import scroll from "components/scroll/scroll"
 export default {
   props:{
     movieDetail:{
@@ -44,17 +48,76 @@ export default {
     }
   },
   components:{
-    star
+    star,
+    scroll
+  },
+  data() {
+    return {
+      eventPassthrough:'vertical'
+    }
   },
   methods:{
+    ...mapActions([
+      'addWatchMovies','removeWatchMovies','addWantMovies','removeWantMovies'
+    ]),
     getImages( _url ){
       if( _url !== undefined ){
         let _u = _url.substring( 7 );
         return 'https://images.weserv.nl/?url=' + _u;
       }
     },
+    selectCelebrity(id) {
+      this.$router.push({
+        path:`/cele/${id}`
+      })
+    },
+    _initWidth() {
+      let Width = 98 * this.allCasts.length
+      this.$refs.content.style.width = Width + 'px'
+    },
+    toggleWatch() {
+      if(this.isWatch(this.watchedMovies)) {
+        this.removeWatchMovies(createLists(this.movieDetail))
+      }else {
+        this.addWatchMovies(createLists(this.movieDetail))
+      }
+    },
+    toggleWant() {
+      if(this.isWatch(this.wantedMovies)){
+        this.removeWantMovies(createLists(this.movieDetail))
+        console.log(0)
+      }else {
+        this.addWantMovies(createLists(this.movieDetail))
+      }
+    },
+    isWatch(data) {
+      const index = data.findIndex((item) => {
+        return item.id === this.movieDetail.id
+      })
+      return index > -1
+    },
+    watchClass() {
+      if(this.isWatch(this.watchedMovies)) {
+        return 'watch'
+      }else {
+        return 'no-watch'
+      }
+    },
+    wantClass() {
+      if(this.isWatch(this.wantedMovies)) {
+        return 'want'
+      }else {
+        return 'no-want'
+      }
+    }
+  },
+  mounted () {
+    this._initWidth()
   },
   computed:{
+    ...mapState([
+      'watchedMovies','wantedMovies'
+    ]),
     tag(){
       let year=this.movieDetail.year;
       let tag = this.movieDetail.genres.join('/');
@@ -153,10 +216,19 @@ export default {
       border-radius 5px
       text-align center
       line-height 30px
-    .want-watch
+    .want
       flex 1
       margin-right 20px
-    .has-watch
+      color #fe9800
+      border 1px solid #fe9800
+    .no-want
+      flex 1
+      margin-right 20px
+    .no-watch
+      flex 2
+    .watch
+      color #fe9800
+      border 1px solid #fe9800
       flex 2
   .summary
     margin-top 20px
@@ -174,7 +246,7 @@ export default {
     padding 30px 0
     width 100%
     white-space nowrap
-    overflow-y hidden
+    overflow hidden
     color #777
     h2
       padding-bottom 20px

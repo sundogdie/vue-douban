@@ -6,7 +6,7 @@
       </span>
       <span class="type">影评</span>
     </div>
-    <div class="review-detail" :data="reviewDetail">
+    <scroll class="review-detail" :data="reviewDetail">
       <div class="scroll-wrapper">
         <div class="review-content" v-if="reviewDetail.author">
           <h1 class="title">{{reviewDetail.title}}</h1>
@@ -38,11 +38,12 @@
           </div>
         </div>
       </div>
-    </div>
+    </scroll>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import scroll from 'components/scroll/scroll'
   import Star from 'components/star/star';
   export default {
     data() {
@@ -69,6 +70,7 @@
     },
     components: {
       Star,
+      scroll
     }
   };
 </script>
@@ -104,7 +106,7 @@
     left: 0
     right: 0
     z-index: 997
-    overflow-x: hidden
+    overflow: hidden
     background-color: white
     .review-content
       padding: 70px 20px 40px 20px
