@@ -2,7 +2,7 @@
 ## 项目简介
 > 一个模仿豆瓣的vue项目
 
-> 没有使用滚动库 体验可能不太好 
+> 2019.2.10 添加了better-scroll组件 解决了一些之前没完善的内容 
 
 >用到的技术栈为vue+vue-cli+vue-router+stylus
 
